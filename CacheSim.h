@@ -38,9 +38,11 @@ public:
     /* Fully Associative */
     // "tag" as the key
     unordered_map<string, string> cacheFullyAssociative;
-    queue<string> queueFullyAssociative;
-    LRU lru;
+    queue<string> fifoFullyAssociative;
+    LRU<string> lruFullyAssociative;
 
+    /* Direct Mapped */
+    unordered_map<int, string> cacheDirectMapped;
 
 
 
@@ -53,6 +55,7 @@ public:
 
     void readFile(const string& filePath);
     void simFullyAssociative(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
+    void simDirectMapped(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
     void simulate(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
 
 

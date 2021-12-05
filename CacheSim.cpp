@@ -9,6 +9,7 @@ using std::ifstream;
 using std::cout;
 using std::endl;
 using std::log2;
+using std::stoi;
 
 void CacheSim::readFile(const string &filePath) {
     ifstream file(filePath);
@@ -38,6 +39,10 @@ void CacheSim::readFile(const string &filePath) {
 
 void CacheSim::simFullyAssociative(int numSets, int numBlocks, int bytesPerBlock, const string &replacePol) {
     cacheFullyAssociative.clear();
+    lruFullyAssociative.clear();
+    while (!fifoFullyAssociative.empty())
+        fifoFullyAssociative.pop();
+
     numHits = 0;
     numMisses = 0;
 
@@ -48,25 +53,52 @@ void CacheSim::simFullyAssociative(int numSets, int numBlocks, int bytesPerBlock
         string tagField = curr.address.substr(0, tagFieldSize);
         string offsetField = curr.address.substr(tagFieldSize, offsetFieldSize);
 
-        if (cacheFullyAssociative.find(tagField) != cacheFullyAssociative.end()) {
-            lru.hit(tagField);
+        if (cacheFullyAssociative.find(tagField) != cacheFullyAssociative.end()) { // if it exists
+            lruFullyAssociative.hit(tagField);
             numHits++;
         } else {
-            lru.insert(tagField);
+            lruFullyAssociative.insert(tagField);
+            fifoFullyAssociative.push(tagField);
             numMisses++;
 
             if (cacheFullyAssociative.size() == numBlocks) {
                 if (replacePol == "LRU") {
-                    string tagToDelete = lru.getLRU();
-                    lru.remove(tagToDelete);
+                    string tagToDelete = lruFullyAssociative.getLRU();
+                    lruFullyAssociative.remove(tagToDelete);
                     cacheFullyAssociative.erase(tagToDelete);
                 } else if (replacePol == "FIFO") {
-                    // TODO fifo delete
-                    cacheFullyAssociative.erase(cacheFullyAssociative.begin());
+                    string tagToDelete = fifoFullyAssociative.front();
+                    fifoFullyAssociative.pop();
+                    cacheFullyAssociative.erase(tagToDelete);
                 }
             }
 
             cacheFullyAssociative.insert(pair<string, string>(tagField, offsetField));
+        }
+    }
+}
+
+void CacheSim::simDirectMapped(int numSets, int numBlocks, int bytesPerBlock, const string &replacePol) {
+    cacheDirectMapped.clear();
+
+    numHits = 0;
+    numMisses = 0;
+
+    unsigned int offsetFieldSize = log2(bytesPerBlock);
+    unsigned int lineFieldSize = log2(numSets);
+    unsigned int tagFieldSize = 32 - offsetFieldSize - lineFieldSize;
+
+    for (const Instruction& curr : instructionStore) {
+        string tagField = curr.address.substr(0, tagFieldSize);
+        string lineField = curr.address.substr(tagFieldSize, lineFieldSize);
+        string offsetField = curr.address.substr(tagFieldSize + lineFieldSize, offsetFieldSize);
+        int cacheLine = stoi(lineField, nullptr, 2) % numSets;
+
+        if (cacheDirectMapped[cacheLine] == tagField) {
+            numHits++;
+        } else {
+            cacheDirectMapped[cacheLine] = tagField;
+            numMisses++;
         }
     }
 }
@@ -148,4 +180,5 @@ string CacheSim::hexToBin(const string &in) {
 
     return out;
 }
+
 
