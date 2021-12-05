@@ -36,13 +36,17 @@ public:
     vector<Instruction> instructionStore;
 
     /* Fully Associative */
-    // "tag" as the key
     unordered_map<string, string> cacheFullyAssociative;
     queue<string> fifoFullyAssociative;
     LRU<string> lruFullyAssociative;
 
     /* Direct Mapped */
     unordered_map<int, string> cacheDirectMapped;
+
+    /* Set Associative */
+    unordered_map<int, unordered_map<string, string>> cacheSetAssociative;
+    unordered_map<int, queue<string>> fifoSetAssociative;
+    unordered_map<int, LRU<string>> lruSetAssociative;
 
 
 
@@ -56,6 +60,7 @@ public:
     void readFile(const string& filePath);
     void simFullyAssociative(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
     void simDirectMapped(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
+    void simSetAssociative(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
     void simulate(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
 
 

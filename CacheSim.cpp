@@ -103,6 +103,17 @@ void CacheSim::simDirectMapped(int numSets, int numBlocks, int bytesPerBlock, co
     }
 }
 
+void CacheSim::simSetAssociative(int numSets, int numBlocks, int bytesPerBlock, const string &replacePol) {
+    cacheSetAssociative.clear();
+    fifoSetAssociative.clear();
+    lruSetAssociative.clear();
+
+    numHits = 0;
+    numMisses = 0;
+
+
+}
+
 void CacheSim::simulate(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol) {
     unsigned int offsetFieldSize = log2(bytesPerBlock);
     unsigned int setFieldSize = log2(numSets);

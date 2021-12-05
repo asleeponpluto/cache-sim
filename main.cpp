@@ -13,6 +13,8 @@ int main() {
 //    cout << "lru hit rate: " << (double)(sim.numHits) / (double)(sim.numHits + sim.numMisses) << endl;
 
     /* Direct Mapped */
-    sim.simDirectMapped(256, 1, 256, "FIFO");
-    cout << "hit rate: " << (double)(sim.numHits) / (double)(sim.numHits + sim.numMisses) << endl;
+//    sim.simDirectMapped(256, 1, 256, "FIFO");
+//    cout << "hit rate: " << (double)(sim.numHits) / (double)(sim.numHits + sim.numMisses) << endl;
+
+    /* Set Associative */
 }
