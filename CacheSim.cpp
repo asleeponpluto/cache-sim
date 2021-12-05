@@ -105,13 +105,45 @@ void CacheSim::simDirectMapped(int numSets, int numBlocks, int bytesPerBlock, co
 
 void CacheSim::simSetAssociative(int numSets, int numBlocks, int bytesPerBlock, const string &replacePol) {
     cacheSetAssociative.clear();
-    fifoSetAssociative.clear();
     lruSetAssociative.clear();
+    fifoSetAssociative.clear();
 
     numHits = 0;
     numMisses = 0;
 
+    unsigned int offsetFieldSize = log2(bytesPerBlock);
+    unsigned int setFieldSize = log2(numSets);
+    unsigned int tagFieldSize = 32 - setFieldSize - offsetFieldSize;
 
+    for (const Instruction& curr : instructionStore) {
+        string tagField = curr.address.substr(0, tagFieldSize);
+        string setField = curr.address.substr(tagFieldSize, setFieldSize);
+        string offsetField = curr.address.substr(tagFieldSize + setFieldSize, offsetFieldSize);
+
+        if (cacheSetAssociative[setField].find(tagField) != cacheSetAssociative[setField].end()) {
+            lruSetAssociative[setField].hit(tagField);
+            numHits++;
+        } else {
+            lruSetAssociative[setField].insert(tagField);
+            fifoSetAssociative[setField].push(tagField);
+            numMisses++;
+
+            if (cacheSetAssociative[setField].size() == numBlocks) {
+                if (replacePol == "LRU") {
+                    string tagToDelete = lruSetAssociative[setField].getLRU();
+                    lruSetAssociative[setField].remove(tagToDelete);
+                    cacheSetAssociative[setField].erase(tagToDelete);
+                } else if (replacePol == "FIFO") {
+                    string tagToDelete = fifoSetAssociative[setField].front();
+                    fifoSetAssociative[setField].pop();
+                    cacheSetAssociative[setField].erase(tagToDelete);
+                }
+
+            }
+
+            cacheSetAssociative[setField].insert(pair<string, string>(tagField, offsetField));
+        }
+    }
 }
 
 void CacheSim::simulate(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol) {

@@ -44,9 +44,9 @@ public:
     unordered_map<int, string> cacheDirectMapped;
 
     /* Set Associative */
-    unordered_map<int, unordered_map<string, string>> cacheSetAssociative;
-    unordered_map<int, queue<string>> fifoSetAssociative;
-    unordered_map<int, LRU<string>> lruSetAssociative;
+    unordered_map<string, unordered_map<string, string>> cacheSetAssociative;
+    unordered_map<string, queue<string>> fifoSetAssociative;
+    unordered_map<string, LRU<string>> lruSetAssociative;
 
 
 
