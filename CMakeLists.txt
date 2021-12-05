@@ -3,4 +3,4 @@ project(cache_sim)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(cache_sim main.cpp CacheSim.cpp CacheSim.h)
+add_executable(cache_sim main.cpp CacheSim.cpp CacheSim.h LRU.cpp LRU.h)

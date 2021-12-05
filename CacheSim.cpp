@@ -36,12 +36,49 @@ void CacheSim::readFile(const string &filePath) {
     }
 }
 
+void CacheSim::simFullyAssociative(int numSets, int numBlocks, int bytesPerBlock, const string &replacePol) {
+    cacheFullyAssociative.clear();
+    numHits = 0;
+    numMisses = 0;
+
+    unsigned int offsetFieldSize = log2(bytesPerBlock);
+    unsigned int tagFieldSize = 32 - offsetFieldSize;
+
+    for (const Instruction& curr : instructionStore) {
+        string tagField = curr.address.substr(0, tagFieldSize);
+        string offsetField = curr.address.substr(tagFieldSize, offsetFieldSize);
+
+        if (cacheFullyAssociative.find(tagField) != cacheFullyAssociative.end()) {
+            lru.hit()
+            numHits++;
+        } else {
+            numMisses++;
+
+            if (cacheFullyAssociative.size() == numBlocks) {
+                if (replacePol == "LRU") {
+                    // TODO lru delete
+                    cacheFullyAssociative.erase(cacheFullyAssociative.begin());
+                } else if (replacePol == "FIFO") {
+                    // TODO fifo delete
+                    cacheFullyAssociative.erase(cacheFullyAssociative.begin());
+                }
+            }
+
+            cacheFullyAssociative.insert(pair<string, string>(tagField, offsetField));
+        }
+    }
+}
+
 void CacheSim::simulate(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol) {
     unsigned int offsetFieldSize = log2(bytesPerBlock);
     unsigned int setFieldSize = log2(numSets);
     unsigned int tagFieldSize = 32 - setFieldSize - offsetFieldSize;
 
     for (const Instruction& curr : instructionStore) {
+        string tagField = curr.address.substr(0, tagFieldSize);
+        string setField = curr.address.substr(tagFieldSize, setFieldSize);
+        string offsetField = curr.address.substr(tagFieldSize + setFieldSize, offsetFieldSize);
+        cout << "tag: " << tagField << ", set: " << setField << ", offset: " << offsetField << endl;
     }
 }
 
@@ -109,3 +146,4 @@ string CacheSim::hexToBin(const string &in) {
 
     return out;
 }
+
