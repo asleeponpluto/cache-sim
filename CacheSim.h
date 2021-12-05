@@ -22,7 +22,6 @@ private:
             this->isLoad = isLoad;
             this->address = address;
         }
-
     };
 
     struct Line {
@@ -30,7 +29,6 @@ private:
         unsigned int tag;
     };
 
-public:
     unsigned int numHits;
     unsigned int numMisses;
     vector<Instruction> instructionStore;
@@ -47,13 +45,6 @@ public:
     unordered_map<string, unordered_map<string, string>> cacheSetAssociative;
     unordered_map<string, queue<string>> fifoSetAssociative;
     unordered_map<string, LRU<string>> lruSetAssociative;
-
-
-
-    // outer map is using the "tag" as the key
-    // inner map is using the "set" as the key
-    // inner map value is the data
-    unordered_map<string, unordered_map<string, string>> cache;
 public:
     static string hexToBin(const string& in);
 
@@ -62,7 +53,7 @@ public:
     void simDirectMapped(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
     void simSetAssociative(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
     void simulate(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
-
+    double getHitRate();
 
     void printStored();
 };

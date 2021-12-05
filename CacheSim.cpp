@@ -224,4 +224,8 @@ string CacheSim::hexToBin(const string &in) {
     return out;
 }
 
+double CacheSim::getHitRate() {
+    return (double)(numHits) / (double)(numHits + numMisses);
+}
+
 
