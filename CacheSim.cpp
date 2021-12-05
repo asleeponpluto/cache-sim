@@ -49,15 +49,17 @@ void CacheSim::simFullyAssociative(int numSets, int numBlocks, int bytesPerBlock
         string offsetField = curr.address.substr(tagFieldSize, offsetFieldSize);
 
         if (cacheFullyAssociative.find(tagField) != cacheFullyAssociative.end()) {
-            lru.hit()
+            lru.hit(tagField);
             numHits++;
         } else {
+            lru.insert(tagField);
             numMisses++;
 
             if (cacheFullyAssociative.size() == numBlocks) {
                 if (replacePol == "LRU") {
-                    // TODO lru delete
-                    cacheFullyAssociative.erase(cacheFullyAssociative.begin());
+                    string tagToDelete = lru.getLRU();
+                    lru.remove(tagToDelete);
+                    cacheFullyAssociative.erase(tagToDelete);
                 } else if (replacePol == "FIFO") {
                     // TODO fifo delete
                     cacheFullyAssociative.erase(cacheFullyAssociative.begin());

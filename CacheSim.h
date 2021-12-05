@@ -30,6 +30,7 @@ private:
         unsigned int tag;
     };
 
+public:
     unsigned int numHits;
     unsigned int numMisses;
     vector<Instruction> instructionStore;

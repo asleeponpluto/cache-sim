@@ -4,8 +4,7 @@ using namespace std;
 
 int main() {
     CacheSim sim;
-    sim.readFile("read01.trace");
-    sim.simFullyAssociative(1, 1, 4, "FIFO");
-    cout << sim.numHits << endl;
-    cout << sim.numMisses << endl;
+    sim.readFile("gcc.trace");
+    sim.simFullyAssociative(1, 16, 4, "LRU");
+    cout << "hit rate: " << (double)(sim.numHits) / (double)(sim.numHits + sim.numMisses) << endl;
 }
