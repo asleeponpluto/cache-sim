@@ -1,6 +1,7 @@
 #include <iostream>
 #include "CacheSim.h"
-using namespace std;
+using std::cout;
+using std::endl;
 
 int main() {
     CacheSim sim;
