@@ -47,13 +47,14 @@ private:
     unordered_map<string, LRU<string>> lruSetAssociative;
 public:
     static string hexToBin(const string& in);
+    static void printHeader();
 
     void readFile(const string& filePath);
     void simFullyAssociative(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
     void simDirectMapped(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
     void simSetAssociative(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
-    void simulate(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol);
     double getHitRate();
 
+    void runTest(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol, unsigned int type);
     void printStored();
 };

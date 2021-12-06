@@ -146,19 +146,6 @@ void CacheSim::simSetAssociative(int numSets, int numBlocks, int bytesPerBlock, 
     }
 }
 
-void CacheSim::simulate(int numSets, int numBlocks, int bytesPerBlock, const string& replacePol) {
-    unsigned int offsetFieldSize = log2(bytesPerBlock);
-    unsigned int setFieldSize = log2(numSets);
-    unsigned int tagFieldSize = 32 - setFieldSize - offsetFieldSize;
-
-    for (const Instruction& curr : instructionStore) {
-        string tagField = curr.address.substr(0, tagFieldSize);
-        string setField = curr.address.substr(tagFieldSize, setFieldSize);
-        string offsetField = curr.address.substr(tagFieldSize + setFieldSize, offsetFieldSize);
-        cout << "tag: " << tagField << ", set: " << setField << ", offset: " << offsetField << endl;
-    }
-}
-
 void CacheSim::printStored() {
     for (const Instruction& t : instructionStore) {
         cout << t.isLoad << "\t" << t.address << endl;
@@ -226,6 +213,21 @@ string CacheSim::hexToBin(const string &in) {
 
 double CacheSim::getHitRate() {
     return (double)(numHits) / (double)(numHits + numMisses);
+}
+
+void CacheSim::runTest(int numSets, int numBlocks, int bytesPerBlock, const string &replacePol, unsigned int type) {
+    if (type == 0)
+        simFullyAssociative(numSets, numBlocks, bytesPerBlock, replacePol);
+    else if (type == 1)
+        simDirectMapped(numSets, numBlocks, bytesPerBlock, replacePol);
+    else if (type == 2)
+        simSetAssociative(numSets, numBlocks, bytesPerBlock, replacePol);
+
+    cout << numSets << "\t" << numBlocks << "\t" << bytesPerBlock << "\t" << replacePol << "\t" << getHitRate() << endl;
+}
+
+void CacheSim::printHeader() {
+    cout << "sets\tblocks\tsize\tpolicy\thit-rate" << endl;
 }
 
 
